@@ -5,12 +5,67 @@
 #include <unordered_map>
 #include <ctime>
 using namespace std;
+using std::cout;
+using std::endl;
+using std::fstream;
+using std::string;
 
-void addRecipe()
+void addRecipe(string recipebook_filename)
 {
+    string name;
+    string ingrediants;
+    string author;
+    string steps;
+    cout << "Please enter recipe name: ";
+    cin >> name;
+
+    cout << "Please enter recipe author: ";
+    cin >> author;
+
+    cout << "Please enter the ingrediants: (to end type !) ";
+
+    string line_ingrediants;
+    while (getline(cin, line_ingrediants))
+    {
+        if (line_ingrediants == "!")
+            break;
+        ingrediants += line_ingrediants;
+    }
+
+    cout << "Please enter the instructions: (to end type !) ";
+
+    string line_steps;
+    int iter = 1;
+    while (getline(cin, line_steps))
+    {
+        if (line_steps == "!")
+            break;
+        string s = std::to_string(iter);
+        line_steps = s + ". " + line_steps + "\n";
+        steps += line_steps;
+        iter++;
+    }
+
+    ofstream recipebook;
+    string filename = recipebook_filename;
+    // recipebook.open ("RecipeBook2.txt");
+    recipebook.open(filename, std::ios_base::app | std::ios_base::in);    
+    if (recipebook.is_open())
+    {
+        recipebook << "________________ \n";
+        recipebook << name << "\n";
+        recipebook << author << "\n";
+        recipebook << "Ingredients:"
+               << "\n";
+        recipebook << ingrediants << "\n";
+        recipebook << "Instructions:"
+               << "\n";
+        recipebook << steps << "\n";
+        recipebook.close();
+    }
 }
 
-void Parser(unordered_map<int, vector<string>> &RecipeBook)
+void Parser(unordered_map<int, vector<string>> &RecipeBook, string recipebook_filename)
 {
     // Create a text string, which is used to output the text file
     string line;
@@ -23,7 +78,7 @@ void Parser(unordered_map<int, vector<string>> &RecipeBook)
     // unordered_map<string, vector<string>> RecipeBook;
 
     // Read from the text file
-    ifstream MyReadFile("RecipeBook.txt");
+    ifstream MyReadFile(recipebook_filename);
 
     // Use a while loop together with the getline() function to read the file line by line
     while (getline(MyReadFile, line))
@@ -82,22 +137,20 @@ void Parser(unordered_map<int, vector<string>> &RecipeBook)
     MyReadFile.close();
 }
 
-int main(int argc,     // Number of strings in array argv
-         char *argv[], // Array of command-line argument strings
-         char *envp[]) // Array of environment variable strings
-
+int main(int argc,char *argv[], char *envp[]) 
 {
+    string recipebook_filename = "RecipeBook.txt";
     string user_input;
     cout << "Type `A` to Add a recipe or `R` to receive a recipe: ";
     cin >> user_input;
     if (user_input == "A" | user_input == "a")
     {
-        addRecipe();
+        addRecipe(recipebook_filename);
     }
     if (user_input == "R" | user_input == "r")
     {
         unordered_map<int, vector<string>> RecipeBook;
-        Parser(RecipeBook);
+        Parser(RecipeBook, recipebook_filename);
         auto it = RecipeBook.begin();
         srand(time(NULL));
         advance(it, rand() % RecipeBook.size());
