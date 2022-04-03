@@ -137,18 +137,33 @@ void Parser(unordered_map<int, vector<string>> &RecipeBook, string recipebook_fi
     MyReadFile.close();
 }
 
-int main(int argc,char *argv[], char *envp[]) 
-{
-    string recipebook_filename = "RecipeBook.txt";
-    string user_input;
+int userInput(string user_input, string recipebook_filename ) {
     cout << "Type `A` to Add a recipe or `R` to receive a recipe: ";
     cin >> user_input;
-    if (user_input == "A" | user_input == "a")
-    {
+    if (user_input == "A" | user_input == "a"){
+        return 0;}
+    else if (user_input == "R" | user_input == "r"){
+            return 1;}
+    else {
+        return 2;
+    }
+}
+
+
+
+
+int main(int argc,char *argv[], char *envp[]) 
+{
+    string user_input;
+    string recipebook_filename = "RecipeBook.txt";
+    int mode;
+    bool run = true;
+    while(run){
+        mode = userInput( user_input, recipebook_filename);
+    if (mode == 0){
         addRecipe(recipebook_filename);
     }
-    if (user_input == "R" | user_input == "r")
-    {
+    if (mode == 1) {
         unordered_map<int, vector<string>> RecipeBook;
         Parser(RecipeBook, recipebook_filename);
         auto it = RecipeBook.begin();
@@ -160,5 +175,9 @@ int main(int argc,char *argv[], char *envp[])
             cout << "\n"
                  << c << "\n";
         }
+    }
+    if (mode == 2){
+        run = false;
+    }
     }
 }
